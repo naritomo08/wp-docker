@@ -1,0 +1,48 @@
+version: '3.1'
+
+services:
+  mysql:
+    volumes: 
+      - ./docker-data/mysql/:/var/lib/mysql
+    hostname: mysql
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wordpress
+      MYSQL_PASSWORD: wordpress
+    platform: linux/amd64
+
+  wordpress:
+    hostname: wordpress
+    image: wordpress:latest
+    volumes:
+      - ./docker-data/wordpress/themes:/var/www/html/wp-content/themes
+      - ./docker-data/wordpress/plugins:/var/www/html/wp-content/plugins
+      - ./docker-data/wordpress/uploads:/var/www/html/wp-content/uploads
+    links:
+      - mysql
+    depends_on:
+      - mysql
+    ports:
+      - "8080:80"
+    environment:
+      - WORDPRESS_DB_HOST=mysql
+      - WORDPRESS_DB_NAME=wordpress
+      - WORDPRESS_DB_USER=wordpress
+      - WORDPRESS_DB_PASSWORD=wordpress
+    platform: linux/amd64
+
+  adminer:
+    image: adminer:4.8.0
+    ports:
+        - "8081:8080"
+    depends_on:
+        - mysql
+
+  mailhog:
+    image: mailhog/mailhog
+    ports:
+        - "1025:1025"
+        - "8025:8025"
+    platform: linux/amd64
