@@ -1,5 +1,8 @@
 version: '3.1'
 
+volumes:
+  wp_volume:
+
 services:
   mysql:
     volumes: 
@@ -17,6 +20,7 @@ services:
     hostname: wordpress
     image: wordpress:latest
     volumes:
+      - wp_volume:/var/www/html
       - ./docker-data/wordpress/themes:/var/www/html/wp-content/themes
       - ./docker-data/wordpress/plugins:/var/www/html/wp-content/plugins
       - ./docker-data/wordpress/uploads:/var/www/html/wp-content/uploads
